@@ -1,0 +1,7 @@
+*.zip
+*.npz
+*.model
+
+/.ipynb_checkpoints/
+/EEG_Image/
+/tmp/

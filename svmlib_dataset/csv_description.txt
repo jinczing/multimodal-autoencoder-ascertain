@@ -1,0 +1,27 @@
+cluster_list:
+as the seqeunce of training subjects
+
+casual
+simulation
+
+one pass understanding
+repeat points
+no doubt
+
+anova analysis
+feature correlation
+
+TCGA
+
+Big Picture
+
+resampling
+downsampling
+
+摘要包括結果
+
+FDA
+
+cross subject
+
+within subjects
