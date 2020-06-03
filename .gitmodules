@@ -1,3 +1,6 @@
 [submodule "IBCGA"]
 	url = https://github.com/jinczing/IBCGA
 	path = IBCGA
+[submodule "MultimodalAutoencoder"]
+	path = MultimodalAutoencoder
+	url = https://github.com/jinczing/MultimodalAutoencoder

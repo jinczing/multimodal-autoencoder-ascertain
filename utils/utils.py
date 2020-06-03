@@ -4,6 +4,40 @@ import numpy as np
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
+def libsvm_to_mmae_csv(output_path, svm_path, modality_names, modality_nums):
+    """
+    args:
+        output_path: a path to place csv file
+        svm_path: source libsvm style file path (0:subject_id, 1:clip_id)
+    
+    return:
+    csv file with colume: label, subject_id, clip_id, [modality_feature_id]
+    """
+    samples = open(svm_path).read().split('\n')
+    
+    f = open(output_path, 'w+')
+    
+    # write column to csv
+    f.write('label' + ',' + 'subject_id' + ',' + 'clip_id')
+    for modality_index in range(len(modality_names)):
+        for feature_index in range(modality_nums[modality_index]):
+            f.write(',' + modality_names[modality_index] + '_' + str(feature_index+1))
+    
+    for sample in samples:
+        if sample == '': continue
+        f.write('\n')
+        for txt in sample.split():
+            if txt=='+1' or txt=='-1':
+                f.write(txt)
+            else:
+                f.write(',')
+                f.write(txt.split(':')[1])
+                
+    f.close()
+        
+        
+    
+
 def get_alpha(distances):
     return [(1/distances[0])/(1/distances[0]+1/distances[1]+1/distances[2]), (1/distances[1])/(1/distances[0]+1/distances[1]+1/distances[2]), 
            (1/distances[2])/(1/distances[0]+1/distances[1]+1/distances[2])]
