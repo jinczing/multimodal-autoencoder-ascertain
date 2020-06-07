@@ -11,27 +11,38 @@ def libsvm_to_mmae_csv(output_path, svm_path, modality_names, modality_nums):
         svm_path: source libsvm style file path (0:subject_id, 1:clip_id)
     
     return:
-    csv file with colume: label, subject_id, clip_id, [modality_feature_id]
+    csv file with column: arousal_label, valence_label, subject_id, clip_id, dataset, logistics_noisy, [modality_feature_id]
     """
     samples = open(svm_path).read().split('\n')
     
     f = open(output_path, 'w+')
     
     # write column to csv
-    f.write('label' + ',' + 'subject_id' + ',' + 'clip_id')
+    f.write('index' + ',' + 'arousal_label' + ',' + 'valence_label' + ',' + 'subject_id' + ',' + 'clip_id' + ',' + 'dataset' + ',' + 'logistics_noisy')
     for modality_index in range(len(modality_names)):
         for feature_index in range(modality_nums[modality_index]):
             f.write(',' + modality_names[modality_index] + '_' + str(feature_index+1))
     
+    injected_index = [] # [4]
+    injected_column = [] # [False]
+    
+    idd = 0
     for sample in samples:
+        index = 0
         if sample == '': continue
         f.write('\n')
         for txt in sample.split():
-            if txt=='+1' or txt=='-1':
+            if index in injected_index:
+                f.write(',')
+                f.write(str(injected_column[injected_index.index(index)]))
+            if txt=='1' or txt=='0':
+                f.write(str(idd+1) + ',')
                 f.write(txt)
             else:
                 f.write(',')
                 f.write(txt.split(':')[1])
+            index += 1
+        idd += 1
                 
     f.close()
         
