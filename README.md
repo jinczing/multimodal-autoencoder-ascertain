@@ -2,7 +2,7 @@
 This is a experiemt which apply Multimodal Autoencoder[1], invented by MIT Media Lab, to the ASCERTAIN dataset[2], a emotion recogintion dataset features commercial sensor
 and personality rating.
 
-# Reference
+### Reference
 [1] Multimodal Autoencoder: https://github.com/natashamjaques/MultimodalAutoencoder
 Jaques N., Taylor S., Sano A., Picard R.,"Multimodal Autoencoder: A Deep Learning Approach to Filling In Missing Sensor Data and Enabling Better Mood Prediction", International Conference on Affective Computing and Intelligent Interaction, October 2017, Texas, USA.
 
