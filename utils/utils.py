@@ -221,13 +221,18 @@ def performance(dataset_file, output_file):
             break
         index += 1
     
+    
     #total = len(trues)
     precision = 0
     if total == 0:
         precision = 0
     else:
         precision = correct_num/total
-    recall = tp_num / true_num
+
+    if true_num == 0:
+        recall = 0
+    else:
+        recall = tp_num / true_num
     f1_score = 0
     if (precision+recall) != 0:
         f1_score = 2 * (precision*recall)/(precision+recall)
@@ -266,6 +271,26 @@ def f1_score(predicts, trues):
     f1 = 2 * (precision*recall)/(precision + recall) if (precision + recall) != 0 else 0
     
     return f1
+
+def independent_test(resource_path, dataset_path, train_name, test_name, c=4, g=0.0078125, b=1):
+    # train model
+    cmdline = get_train_cmd(resource_path + 'svm-train.exe', dataset_path+train_name, c, g, b)
+    process = subprocess.Popen(cmdline,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
+    process.wait()
+    result = process.stdout
+
+    # predict model
+    cmdline = get_test_cmd(resource_path + 'svm-predict.exe', dataset_path+test_name, train_name + '.model', test_name + '_output')
+    process = subprocess.Popen(cmdline,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
+    process.wait()
+    result = process.stdout
+
+    dataset_file = open(dataset_path+test_name).read()
+    output_file = open('./' + test_name + '_output').read()
+
+    predicts, trues, f1, precision = performance(dataset_file, output_file)
+    return predicts, trues
+        
     
 def f1_score_evaluate(resource_path, dataset_path, dataset_name, k=10, c=4, g=0.0078125, b=1):
     f = open(dataset_path, 'r')
@@ -287,6 +312,10 @@ def f1_score_evaluate(resource_path, dataset_path, dataset_name, k=10, c=4, g=0.
     aucs = []
     accs = []
     
+    predss = []
+    truess = []
+
+
     for i in range(k): # k folds validation
         train = dataset_name + '_train_' + str(i+1)
         test = dataset_name + '_test_' + str(i+1)
@@ -331,27 +360,20 @@ def f1_score_evaluate(resource_path, dataset_path, dataset_name, k=10, c=4, g=0.
         output_file = open('./' + test + '_output').read()
         
         predicts, trues, f1, precision = performance(dataset_file, output_file)
-        fpr, tpr, _ = roc_curve(trues, predicts)
-        aucauc = auc(fpr, tpr)
+        predss.append(predicts[0])
+        truess.append(trues[0])
         
-#         lw = 2
-#         plt.plot(fpr, tpr, color='darkorange', lw=lw,
-#          label="ROC curve (area = %0.2f)" % aucauc)
-#         plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-#         plt.xlim([0.0, 1.0])
-#         plt.ylim([0.0, 1.05])
-#         plt.xlabel('False Positive Rate')
-#         plt.ylabel('True Positive Rate')
-#         plt.title('Receiver operating characteristic')
-#         plt.legend(loc="lower right")
-#         plt.show()
+        #fpr, tpr, _ = roc_curve(trues, predicts)
+        #aucauc = auc(fpr, tpr)
+        
+
         
         f1s.append(f1)
-        aucs.append(aucauc)
+        #aucs.append(aucauc)
         accs.append(precision)
         
         #print(f1, aucauc)
-    return sum(f1s)/k, sum(aucs)/k
+    return predss, truess
         
         
         
